@@ -223,7 +223,7 @@
                     $('#submitEmpId').prop("disabled", true);
                     $('#loader').removeClass("d-none");
 
-                    const apiUrl = `https://script.google.com/macros/s/AKfycbxBSBmbGTgJRhotHUE6Vpy0iiA3gAN7m5LBbSEDve5mNsfZlsPKGFQItGW1p1xVVvms/exec?is_json=true&empid=${empid}&user_agent=html`;
+                    const apiUrl = `https://script.google.com/macros/s/AKfycbznneUz0Qfj6-pJ6YJ0NtmrslwOGFhOtsGCusqVXBIcS--TUQvHPdo6QzOdFwgQz5sk/exec?is_json=true&empid=${empid}&user_agent=html`;
 
                     $.get(apiUrl, function (response) {
                         $('#submitEmpId').prop("disabled", false);
@@ -251,7 +251,7 @@
 
                     const table = $('#example').DataTable({
                         ajax: {
-                            url: `https://script.google.com/macros/s/AKfycbxBSBmbGTgJRhotHUE6Vpy0iiA3gAN7m5LBbSEDve5mNsfZlsPKGFQItGW1p1xVVvms/exec?is_json=true&empid=${empid}&user_agent=html`,
+                            url: `https://script.google.com/macros/s/AKfycbznneUz0Qfj6-pJ6YJ0NtmrslwOGFhOtsGCusqVXBIcS--TUQvHPdo6QzOdFwgQz5sk/exec?is_json=true&empid=${empid}&user_agent=html`,
                             dataSrc: 'app_lists'
                         },
                         columns: [
@@ -312,7 +312,7 @@
                         }
 
                         $.ajax({
-                            url: `https://script.google.com/macros/s/AKfycbxBSBmbGTgJRhotHUE6Vpy0iiA3gAN7m5LBbSEDve5mNsfZlsPKGFQItGW1p1xVVvms/exec?is_json=true&is_post=true&empid=${empid}&user_agent=html&subdomains=${Array.from(selectedSubdomains).join(',')}`,  // Update this to your API endpoint
+                            url: `https://script.google.com/macros/s/AKfycbznneUz0Qfj6-pJ6YJ0NtmrslwOGFhOtsGCusqVXBIcS--TUQvHPdo6QzOdFwgQz5sk/exec?is_json=true&is_post=true&empid=${empid}&user_agent=html&subdomains=${Array.from(selectedSubdomains).join(',')}`,  // Update this to your API endpoint
                             type: 'GET',
                             success: function (response) {
                                 $('#responseMessage').text(response.build_required);
