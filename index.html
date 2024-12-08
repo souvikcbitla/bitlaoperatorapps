@@ -304,7 +304,7 @@
                         }
 
                         $.ajax({
-                            url: `https://script.google.com/macros/s/AKfycbxIbLAnM1KHdUDll9A2QPQElpiaruqjnF0aUVJhzXIr4KRz6I0UAbgsBOQFtiWQpMSt/exec?is_post=true&empid=${empid}&user_agent=html&subdomains=${Array.from(selectedSubdomains).join(',')}`,  // Update this to your API endpoint
+                            url: `https://script.google.com/macros/s/AKfycbxIbLAnM1KHdUDll9A2QPQElpiaruqjnF0aUVJhzXIr4KRz6I0UAbgsBOQFtiWQpMSt/exec?is_json=true&is_post=true&empid=${empid}&user_agent=html&subdomains=${Array.from(selectedSubdomains).join(',')}`,  // Update this to your API endpoint
                             type: 'GET',
                             success: function (response) {
                                 $('#responseMessage').text(JSON.stringify(response, null, 2));
