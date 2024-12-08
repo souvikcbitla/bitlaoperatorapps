@@ -27,72 +27,78 @@
             .dt-length label{
                 margin-left: 10px;
             }
+            .count-section, .table-wrapper, #submitButton, .chart-container, .countdata {
+                display: none;
+            }
         </style>
     </head>
     <body>
+        
         <div class="container">
             <div class="jumbotron text-center">
                 <h2>Bitla Software</h2>
                 <p>Operator Android App lists in Bitla </p>
             </div>
             
-            <div class="row">
-                <!-- Total Count Card -->
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong>Total Count</strong>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title"><span id="totalCount">0</span></h5>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Build Required Counts Card -->
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong>Build Required Counts</strong>
-                        </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Build Number</th>
-                                        <th>Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="buildRequiredCounts">
-                                </tbody>
-                            </table>
+            <div class="countdata">
+                <div class="row">
+                    <!-- Total Count Card -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>Total Count</strong>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title"><span id="totalCount">0</span></h5>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Country Wise Counts Card -->
-                <div class="col-md-4 mb-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <strong>Country Wise Counts</strong>
+                    <!-- Build Required Counts Card -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>Build Required Counts</strong>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Build Number</th>
+                                            <th>Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="buildRequiredCounts">
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Country</th>
-                                        <th>Count</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="countryWiseCounts">
-                                </tbody>
-                            </table>
+                    </div>
+
+                    <!-- Country Wise Counts Card -->
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong>Country Wise Counts</strong>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Country</th>
+                                            <th>Count</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="countryWiseCounts">
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <div class="chart-container" style="display: none;">
+
+            <div class="chart-container">
                 <canvas id="myChart"></canvas>
             </div>
             <div class="table-wrapper">
@@ -123,6 +129,28 @@
                 </table>
             </div>
             <button id="submitButton" class="btn btn-primary mt-3">Submit</button>
+
+            <div id="loader" class="text-center d-none" style="margin-top: 20%;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="empIdModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Enter Employee ID</h5>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" id="empidInput" class="form-control" placeholder="Enter Employee ID">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="submitEmpId" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Modal -->
@@ -147,96 +175,163 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             $(document).ready(function () {
-                let selectedSubdomains = new Set();
 
-                const table = $('#example').DataTable({
-                    ajax: {
-                        url: 'https://script.google.com/macros/s/AKfycbxBSBmbGTgJRhotHUE6Vpy0iiA3gAN7m5LBbSEDve5mNsfZlsPKGFQItGW1p1xVVvms/exec?is_json=true&empid=BS1614&user_agent=html',
-                        dataSrc: 'app_lists'
-                    },
-                    columns: [
-                        {
-                            data: 'sub_domain',
-                            render: function (data) {
-                                return `<input type="checkbox" class="rowCheckbox" data-subdomain="${data}">`;
-                            }
-                        },
-                        { data: 'build_required' },
-                        { data: 'version' },
-                        { data: 'version_code' },
-                        { data: 'sub_domain' },
-                        { data: 'key_file_name' },
-                        { data: 'alias_name' },
-                        { data: 'password' },
-                        { data: 'android_package_name' },
-                        { data: 'operator_name' },
-                        { data: 'base_url' },
-                        { data: 'country_name' },
-                        { data: 'developer_name' },
-                        {
-                            data: 'last_app_published_date',
-                            render: function (data) {
-                                return data ? new Date(data).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "N/A";
-                            }
-                        },
-                        { data: 'playstore_link' },
-                        { data: 'region' },
-                        { data: 'analytics_email' },
-                        { data: 'analytics_property' }
-                    ],
-                    processing: true,
-                    responsive: true,
-                    scrollX: true,
-                    fixedHeader: true,
-                    pageLength: 50,
-                    lengthMenu: [5, 10, 25, 50, 100]
-                });
+                const storedEmpId = sessionStorage.getItem("empid");
+                if (storedEmpId) {
+                    loadDataTable(storedEmpId);
+                } else {
+                    $('#empIdModal').modal('show');
+                }
+                
 
-                // Handle checkbox selection
-                $('#example tbody').on('change', '.rowCheckbox', function () {
-                    const subdomain = $(this).data('subdomain');
-                    if (this.checked) {
-                        selectedSubdomains.add(subdomain);
-                    } else {
-                        selectedSubdomains.delete(subdomain);
-                    }
-                });
+                // $('#submitEmpId').on('click', function () {
+                //     const empid = $('#empidInput').val().trim();
+                //     if (!empid) {
+                //         alert("Please enter your Employee ID.");
+                //         return;
+                //     }
 
-                // Handle form submission
-                $('#submitButton').on('click', function () {
-                    if (selectedSubdomains.size === 0) {
-                        alert("Please select at least one subdomain.");
+                //     const apiUrl = `https://script.google.com/macros/s/AKfycbxBSBmbGTgJRhotHUE6Vpy0iiA3gAN7m5LBbSEDve5mNsfZlsPKGFQItGW1p1xVVvms/exec?is_json=true&empid=${empid}&user_agent=html`;
+
+                //     $.get(apiUrl, function (response) {
+                //         if (response && response.app_lists) {
+                //             $('#empIdModal').modal('hide');
+                //             loadDataTable(empid);
+                //         } else {
+                //             alert("Invalid Employee ID!");
+                //         }
+                //     }).fail(function () {
+                //         alert("Error while connecting to API.");
+                //     });
+                // });
+                
+                $('#submitEmpId').on('click', function () {
+                    const empid = $('#empidInput').val().trim();
+
+                    if (!empid) {
+                        alert("Please enter your Employee ID.");
                         return;
                     }
 
-                    const payload = { subdomains: Array.from(selectedSubdomains).join(',') };
+                    // Show Loader
+                    $('#submitEmpId').prop("disabled", true);
+                    $('#loader').removeClass("d-none");
 
-                    $.ajax({
-                        url: 'https://your-api-url.com/endpoint',  // Update this to your API endpoint
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(payload),
-                        success: function (response) {
-                            $('#responseMessage').text(JSON.stringify(response, null, 2));
-                            $('#responseModal').modal('show');
+                    const apiUrl = `https://script.google.com/macros/s/AKfycbxBSBmbGTgJRhotHUE6Vpy0iiA3gAN7m5LBbSEDve5mNsfZlsPKGFQItGW1p1xVVvms/exec?is_json=true&empid=${empid}&user_agent=html`;
+
+                    $.get(apiUrl, function (response) {
+                        $('#submitEmpId').prop("disabled", false);
+                        $('#loader').addClass("d-none");
+
+                        if (response && response.app_lists) {
+                            // Store Employee ID in sessionStorage
+                            sessionStorage.setItem("empid", empid);
+
+                            $('#empIdModal').modal('hide');
+                            loadDataTable(empid);
+                        } else {
+                            alert("Invalid Employee ID!");
+                        }
+                    }).fail(function () {
+                        $('#submitEmpId').prop("disabled", false);
+                        $('#loader').addClass("d-none");
+                        alert("Error while connecting to API.");
+                    });
+                });
+
+                function loadDataTable(empid) {
+                    $('.table-wrapper, .count-section, #submitButton, .countdata').show();
+                    let selectedSubdomains = new Set();
+
+                    const table = $('#example').DataTable({
+                        ajax: {
+                            url: `https://script.google.com/macros/s/AKfycbxBSBmbGTgJRhotHUE6Vpy0iiA3gAN7m5LBbSEDve5mNsfZlsPKGFQItGW1p1xVVvms/exec?is_json=true&empid=${empid}&user_agent=html`,
+                            dataSrc: 'app_lists'
                         },
-                        error: function (xhr, status, error) {
-                            $('#responseMessage').text(`Error: ${error}`);
-                            $('#responseModal').modal('show');
+                        columns: [
+                            {
+                                data: 'sub_domain',
+                                render: function (data) {
+                                    return `<input type="checkbox" class="rowCheckbox" data-subdomain="${data}">`;
+                                }
+                            },
+                            { data: 'build_required' },
+                            { data: 'version' },
+                            { data: 'version_code' },
+                            { data: 'sub_domain' },
+                            { data: 'key_file_name' },
+                            { data: 'alias_name' },
+                            { data: 'password' },
+                            { data: 'android_package_name' },
+                            { data: 'operator_name' },
+                            { data: 'base_url' },
+                            { data: 'country_name' },
+                            { data: 'developer_name' },
+                            {
+                                data: 'last_app_published_date',
+                                render: function (data) {
+                                    return data ? new Date(data).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "N/A";
+                                }
+                            },
+                            { data: 'playstore_link' },
+                            { data: 'region' },
+                            { data: 'analytics_email' },
+                            { data: 'analytics_property' }
+                        ],
+                        processing: true,
+                        responsive: true,
+                        scrollX: true,
+                        fixedHeader: true,
+                        pageLength: 50,
+                        lengthMenu: [5, 10, 25, 50, 100]
+                    });
+
+                    // Handle checkbox selection
+                    $('#example tbody').on('change', '.rowCheckbox', function () {
+                        const subdomain = $(this).data('subdomain');
+                        if (this.checked) {
+                            selectedSubdomains.add(subdomain);
+                        } else {
+                            selectedSubdomains.delete(subdomain);
                         }
                     });
-                });
 
-                // Maintain checkbox states when changing pages
-                table.on('draw', function () {
-                    $('#example tbody .rowCheckbox').each(function () {
-                        const subdomain = $(this).data('subdomain');
-                        $(this).prop('checked', selectedSubdomains.has(subdomain));
+                    // Handle form submission
+                    $('#submitButton').on('click', function () {
+                        if (selectedSubdomains.size === 0) {
+                            alert("Please select at least one subdomain.");
+                            return;
+                        }
+
+                        const payload = { subdomains: Array.from(selectedSubdomains).join(',') };
+
+                        $.ajax({
+                            url: 'https://script.google.com/macros/s/AKfycbxIbLAnM1KHdUDll9A2QPQElpiaruqjnF0aUVJhzXIr4KRz6I0UAbgsBOQFtiWQpMSt/exec',  // Update this to your API endpoint
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(payload),
+                            dataType: "jsonp",
+                            success: function (response) {
+                                $('#responseMessage').text(JSON.stringify(response, null, 2));
+                                $('#responseModal').modal('show');
+                            },
+                            error: function (xhr, status, error) {
+                                $('#responseMessage').text(`Error: ${error}`);
+                                $('#responseModal').modal('show');
+                            }
+                        });
                     });
-                });
-                
-                // Calculate chart data based on table data
-                table.on('xhr', function () {
+
+                    // Maintain checkbox states when changing pages
+                    table.on('draw', function () {
+                        $('#example tbody .rowCheckbox').each(function () {
+                            const subdomain = $(this).data('subdomain');
+                            $(this).prop('checked', selectedSubdomains.has(subdomain));
+                        });
+                    });
+                    
+                    // Calculate chart data based on table data
+                    table.on('xhr', function () {
                     const data = table.ajax.json().app_lists;
 
                     // Initialize counters
@@ -331,8 +426,7 @@
 
                 });
 
-                
-                
+                }
             });
 
         </script>
