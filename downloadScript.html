@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+        <title>Operator Lists</title>
+    </head>
+    <body>
+        
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Bitla Software</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="createoperator.html">Create New Operator</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="downloadScript.html">Download Script File</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="jumbotron text-center">
+                <h2>Download Script File</h2>
+                <p>Operator Android App lists in Bitla </p>
+            </div>
+            
+            <form id="fileForm">
+                <div class="form-group">
+                    <label for="projectPath">Project Path</label>
+                    <input type="text" class="form-control" id="projectPath" value="/Users/souvikchaudhury/Documents/OfficeProjects"
+                        placeholder="/Users/souvikchaudhury/Documents/OfficeProjects" required>
+                </div>
+        
+                <div class="form-group">
+                    <label for="androidFolderPath">Android Folder Path</label>
+                    <input type="text" class="form-control" id="androidFolderPath" value="/Users/souvikchaudhury/Documents/OfficeProjects/android/ts-operator-native"
+                        placeholder="/path/to/android/folder" required>
+                </div>
+        
+                <div class="form-group">
+                    <label for="system">Select System</label>
+                    <select class="form-control" id="system" required>
+                        <option value="mac">Mac (Download .command)</option>
+                        <option value="linux">Linux (Download .sh)</option>
+                    </select>
+                </div>
+        
+                <button type="submit" class="btn btn-primary mt-5 mb-5 btn-block">Generate File</button>
+            </form>
+
+
+            <div id="loader" class="text-center d-none" style="margin-top: 20%;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+        
+        <script>
+            $(document).ready(function () {
+                $('#fileForm').submit(function (e) {
+                    e.preventDefault();
+            
+                    const projectPath = $('#projectPath').val();
+                    const androidFolderPath = $('#androidFolderPath').val();
+                    const system = $('#system').val();
+                    const fileName = system === "mac" ? "appscript.command" : "appscript.sh";
+                    const serverFilePath = "/appscript.sh"; // Replace with your actual server file path
+            
+                    $.get(serverFilePath, function (fileContent) {
+                        // Replace lines in the file
+                        fileContent = fileContent.replace(/ProjectPath=".*?"/, `ProjectPath="${projectPath}"`);
+                        fileContent = fileContent.replace(/androidFolderPath=".*?"/, `androidFolderPath="${androidFolderPath}"`);
+            
+                        // Trigger file download
+                        const blob = new Blob([fileContent], { type: "text/plain" });
+                        const link = document.createElement("a");
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = fileName;
+                        link.click();
+                    }).fail(function () {
+                        alert("Failed to fetch the file from the server.");
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

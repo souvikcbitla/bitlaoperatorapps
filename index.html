@@ -34,6 +34,27 @@
     </head>
     <body>
         
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="display: none;">
+            <a class="navbar-brand" href="#">Bitla Software</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="createoperator.html">Create New Operator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="downloadScript.html">Download Script File</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
         <div class="container">
             <div class="jumbotron text-center">
                 <h2>Bitla Software</h2>
@@ -128,7 +149,7 @@
                     <tbody></tbody>
                 </table>
             </div>
-            <button id="submitButton" class="btn btn-primary mt-3">Submit</button>
+            <button id="submitButton" class="btn btn-primary mt-5 mb-5 btn-block">Submit</button>
 
             <div id="loader" class="text-center d-none" style="margin-top: 20%;">
                 <div class="spinner-border text-primary" role="status">
@@ -154,16 +175,19 @@
         </div>
 
         <!-- Modal -->
-        <div class="modal fade" id="responseModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal fade" id="responseModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">API Response</h5>
+                        <h5 class="modal-title">Build Number</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" id="responseMessage"></div>
+                    <div class="modal-body text-center">
+                        <h5 id="responseMessage"></h5>
+                        <p>Note: Kindly use the above build number for build generation</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -175,7 +199,7 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             $(document).ready(function () {
-
+                
                 const storedEmpId = sessionStorage.getItem("empid");
                 if (storedEmpId) {
                     loadDataTable(storedEmpId);
@@ -183,27 +207,9 @@
                     $('#empIdModal').modal('show');
                 }
                 
-
-                // $('#submitEmpId').on('click', function () {
-                //     const empid = $('#empidInput').val().trim();
-                //     if (!empid) {
-                //         alert("Please enter your Employee ID.");
-                //         return;
-                //     }
-
-                //     const apiUrl = `https://script.google.com/macros/s/AKfycbxBSBmbGTgJRhotHUE6Vpy0iiA3gAN7m5LBbSEDve5mNsfZlsPKGFQItGW1p1xVVvms/exec?is_json=true&empid=${empid}&user_agent=html`;
-
-                //     $.get(apiUrl, function (response) {
-                //         if (response && response.app_lists) {
-                //             $('#empIdModal').modal('hide');
-                //             loadDataTable(empid);
-                //         } else {
-                //             alert("Invalid Employee ID!");
-                //         }
-                //     }).fail(function () {
-                //         alert("Error while connecting to API.");
-                //     });
-                // });
+                $('#responseModal').on('hidden.bs.modal', function () {
+                    location.reload();  // Reload the page
+                });
                 
                 $('#submitEmpId').on('click', function () {
                     const empid = $('#empidInput').val().trim();
@@ -282,7 +288,7 @@
                         responsive: true,
                         scrollX: true,
                         fixedHeader: true,
-                        pageLength: 50,
+                        pageLength: 25,
                         lengthMenu: [5, 10, 25, 50, 100]
                     });
 
@@ -298,6 +304,8 @@
 
                     // Handle form submission
                     $('#submitButton').on('click', function () {
+                        $('#loader').removeClass("d-none");
+
                         if (selectedSubdomains.size === 0) {
                             alert("Please select at least one subdomain.");
                             return;
@@ -307,12 +315,14 @@
                             url: `https://script.google.com/macros/s/AKfycbxBSBmbGTgJRhotHUE6Vpy0iiA3gAN7m5LBbSEDve5mNsfZlsPKGFQItGW1p1xVVvms/exec?is_json=true&is_post=true&empid=${empid}&user_agent=html&subdomains=${Array.from(selectedSubdomains).join(',')}`,  // Update this to your API endpoint
                             type: 'GET',
                             success: function (response) {
-                                $('#responseMessage').text(JSON.stringify(response, null, 2));
+                                $('#responseMessage').text(response.build_required);
                                 $('#responseModal').modal('show');
+                                $('#loader').addClass("d-none");
                             },
                             error: function (xhr, status, error) {
                                 $('#responseMessage').text(`Error: ${error}`);
                                 $('#responseModal').modal('show');
+                                $('#loader').addClass("d-none");
                             }
                         });
                     });
