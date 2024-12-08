@@ -310,7 +310,6 @@
                             type: 'POST',
                             contentType: 'application/json',
                             data: JSON.stringify(payload),
-                            dataType: "jsonp",
                             success: function (response) {
                                 $('#responseMessage').text(JSON.stringify(response, null, 2));
                                 $('#responseModal').modal('show');
