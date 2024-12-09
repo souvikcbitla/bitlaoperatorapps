@@ -46,12 +46,6 @@
                     <input type="text" class="form-control" id="androidFolderPath" value="/Users/souvikchaudhury/Documents/OfficeProjects/android/ts-operator-native"
                         placeholder="/path/to/android/folder" required>
                 </div>
-
-                <div class="form-group">
-                    <label for="gitt">GitT</label>
-                    <input type="text" class="form-control" id="gitt" readonly="true" value=""
-                        placeholder="Git T" required>
-                </div>
         
                 <div class="form-group">
                     <label for="system">Select System</label>
@@ -60,6 +54,17 @@
                         <option value="linux">Linux (Download .sh)</option>
                     </select>
                 </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <p>Mac User Run below script and add token on the keychain</p>
+                        <p><code>security add-generic-password -a your_account -s github_token -w "your_actual_token_here"</code></p>
+                    </div>
+                    <div class="col-sm-12">
+                        <p>Linux User Run below script and add token on the keychain</p>
+                        <p><code>secret-tool store --label="GitHub Token" account your_account service github_token</code></p>
+                    </div>
+                </div>
+
 
                 <div class="form-group">
                     <label for="scriptfile">Script</label>
@@ -464,36 +469,34 @@
         
 
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
         <script>
             $(document).ready(function () {
                 $('#fileForm').submit(function (e) {
                     e.preventDefault();
-            
+
                     const projectPath = $('#projectPath').val();
                     const androidFolderPath = $('#androidFolderPath').val();
                     const system = $('#system').val();
-                    const gitt = $('#gitt').val();
-                    const fileContent = $('#scriptfile').val();
+                    let fileContent = $('#scriptfile').val();  // Changed from const to let
                     
                     const fileName = system === "mac" ? "appscript.command" : "appscript.sh";
-                    const serverFilePath = "/appscript.sh"; // Replace with your actual server file path
-            
-                    // $.get(serverFilePath, function (fileContent) {
-                        // Replace lines in the file
-                        fileContent = fileContent.replace(/ProjectPath=".*?"/, `ProjectPath="${projectPath}"`);
-                        fileContent = fileContent.replace(/androidFolderPath=".*?"/, `androidFolderPath="${androidFolderPath}"`);
-                        fileContent = fileContent.replace(/TOKEN=".*?"/, `TOKEN="${gitt}"`);
-            
-                        // Trigger file download
-                        const blob = new Blob([fileContent], { type: "text/plain" });
-                        const link = document.createElement("a");
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = fileName;
-                        link.click();
-                    // }).fail(function () {
-                    //     alert("Failed to fetch the file from the server.");
-                    // });
+
+
+                    // Replace lines in the file
+                    fileContent = fileContent.replace(/ProjectPath=".*?"/, `ProjectPath="${projectPath}"`);
+                    fileContent = fileContent.replace(/androidFolderPath=".*?"/, `androidFolderPath="${androidFolderPath}"`);
+                    if(system === "linux")
+                        fileContent = fileContent.replace(/TOKEN=".*?"/, `TOKEN="$(secret-tool lookup account your_account service github_token)"`);
+                    else
+                        fileContent = fileContent.replace(/TOKEN=".*?"/, `TOKEN="$(security find-generic-password -a your_account -s github_token -w)"`);
+                    // Trigger file download
+                    const blob = new Blob([fileContent], { type: "text/plain" });
+                    const link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = fileName;
+                    link.click();
                 });
             });
         </script>
