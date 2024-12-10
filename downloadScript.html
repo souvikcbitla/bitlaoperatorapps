@@ -29,44 +29,55 @@
         </nav>
 
         <div class="container">
-            <div class="jumbotron text-center">
-                <h2>Download Script File</h2>
-                <p>Operator Android App lists in Bitla </p>
-            </div>
-            
+            <h4 class="text-center"><u>Follow the below procedure for Saving Script File</u></h4>
             <form id="fileForm">
-                <div class="form-group">
-                    <label for="projectPath">Project Path</label>
+                <div class="form-group otherdiv">
+                    <label for="projectPath">Project Path (For Storing APK file)</label>
                     <input type="text" class="form-control" id="projectPath" value="/Users/souvikchaudhury/Documents/OfficeProjects"
                         placeholder="/Users/souvikchaudhury/Documents/OfficeProjects" required>
                 </div>
-        
-                <div class="form-group">
-                    <label for="androidFolderPath">Android Folder Path</label>
+                <div class="form-group otherdiv">
+                    <label for="androidFolderPath">Android Project Folder Path</label>
                     <input type="text" class="form-control" id="androidFolderPath" value="/Users/souvikchaudhury/Documents/OfficeProjects/android/ts-operator-native"
                         placeholder="/path/to/android/folder" required>
                 </div>
-        
-                <div class="form-group">
+                <div class="form-group otherdiv">
                     <label for="system">Select System</label>
                     <select class="form-control" id="system" required>
                         <option value="mac">Mac (Download .command)</option>
                         <option value="linux">Linux (Download .sh)</option>
                     </select>
                 </div>
+                <h4 class=""><u>Follow the below procedure for Token</u></h4>
                 <div class="row">
                     <div class="col-sm-12">
                         <p>Mac User Run below script and add token on the keychain</p>
                         <p><code>security add-generic-password -a your_account -s github_token -w "your_actual_token_here"</code></p>
+                        <p><small><b>Note:</b> Run above command on terminal</small></p>
                     </div>
                     <div class="col-sm-12">
                         <p>Linux User Run below script and add token on the keychain</p>
                         <p><code>secret-tool store --label="GitHub Token" account your_account service github_token</code></p>
+                        <p><small><b>Note:</b> Run above command on terminal</small></p>
                     </div>
                 </div>
-
-
-                <div class="form-group">
+                <br>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4><u>Follow the below procedure for save the script file</u></h4>
+                        <p>Copy the below script and create a new file and save this with the name of <b>appscript.command</b> if it is mac</p>
+                        <p>Save this with the name of <b>appscript.sh</b> if it is Linux</p>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h4><u>Follow the below procedure for making the script file executable</u></h4>
+                        <p><code>sudo chmod -R 755 {Navigate to script file}</code></p>
+                        <p><small><b>Note:</b> Run above command on terminal</small></p>
+                    </div>
+                </div>
+                <div class="form-group scriptdiv" style="display: none;">
                     <label for="scriptfile">Script</label>
                     <textarea class="form-control" id="scriptfile" style="height: 400px;" readonly="true">#!/bin/bash
                         # *********************************************************************************************************
@@ -455,7 +466,7 @@
                     </textarea>
                 </div>
         
-                <button type="submit" class="btn btn-primary mt-5 mb-5 btn-block">Generate File</button>
+                <button type="submit" class="btn btn-primary mt-5 mb-5 btn-block otherdiv">Generate Script File</button>
             </form>
 
 
@@ -491,12 +502,11 @@
                         fileContent = fileContent.replace(/TOKEN=".*?"/, `TOKEN="$(secret-tool lookup account your_account service github_token)"`);
                     else
                         fileContent = fileContent.replace(/TOKEN=".*?"/, `TOKEN="$(security find-generic-password -a your_account -s github_token -w)"`);
-                    // Trigger file download
-                    const blob = new Blob([fileContent], { type: "text/plain" });
-                    const link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = fileName;
-                    link.click();
+                    
+                    $('#scriptfile').val(fileContent);
+                    $('.scriptdiv').show();
+                    $(".otherdiv").hide();
+                   
                 });
             });
         </script>
