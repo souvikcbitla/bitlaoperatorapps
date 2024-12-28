@@ -23,7 +23,18 @@
             </div>
 
             <button type="submit" class="btn btn-primary w-100" id="createsubmit">Login</button>
-            <p class="d-block mt-2 text-danger" id="errorclass"></p>
+            <p class="d-block mt-2 text-danger" id="errorclass" style="display: none;"></p>
+            <div class="text-center" id="loader" style="display: none;">
+                <div class="spinner-grow text-muted"></div>
+                <div class="spinner-grow text-primary"></div>
+                <div class="spinner-grow text-success"></div>
+                <div class="spinner-grow text-info"></div>
+                <div class="spinner-grow text-warning"></div>
+                <div class="spinner-grow text-danger"></div>
+                <div class="spinner-grow text-secondary"></div>
+                <div class="spinner-grow text-dark"></div>
+                <div class="spinner-grow text-success"></div>
+            </div>
         </form>
     </div>
 
@@ -34,7 +45,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script>
         $(document).ready(function() {
-            $("#errorclass").hide();
             sessionempid = sessionStorage.getItem("empid");
             sessionemptoken = sessionStorage.getItem("emptoken");
             if(sessionempid && sessionemptoken){
@@ -44,6 +54,10 @@
             $("#loginForm").submit(function(event) {
                 event.preventDefault();
 
+                $("#loader").fadeIn();
+                $("#errorclass").hide();
+                $("#loginForm button[type='submit']").prop('disabled', true);
+
                 const empid = $("#empid").val();
                 const emppass = $("#emppass").val();
 
@@ -52,6 +66,8 @@
                         url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?empid=${empid}&emppass=${emppass}`,
                         type: "GET",
                         success: function (response) {
+                            $("#loader").fadeOut();
+                            $("#loginForm button[type='submit']").prop('disabled', false);
                             if(response.code == 200){
                                 //alert("Success");
                                 sessionStorage.setItem("empid", response.data.empid);
@@ -64,11 +80,15 @@
                             
                         },
                         error: function (xhr, status, error) {
-                            console.error("Error:", error);
+                            // console.error("Error:", error);
+                            $("#errorclass").fadeIn();
+                            $("#errorclass").html(error);
                         }
                     });
                 } else {
-                    alert("Please fill out all fields.");
+                    //alert("Please fill out all fields.");
+                    $("#errorclass").fadeIn();
+                    $("#errorclass").html("Please fill out all fields.");
                 }
             });
         });
