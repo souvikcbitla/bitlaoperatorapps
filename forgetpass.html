@@ -10,20 +10,15 @@
 </head>
 <body class="bg-light d-flex justify-content-center align-items-center vh-100">
     <div class="card p-4 shadow-lg" style="width: 400px;">
-        <h4 class="text-center mb-4">Login</h4>
+        <h4 class="text-center mb-4">Forget Password</h4>
         <form id="loginForm">
             <div class="mb-3">
                 <label for="empid" class="form-label">Employee ID</label>
                 <input type="text" class="form-control" placeholder="Enter Employee ID" id="empid" required>
             </div>
-
-            <div class="mb-3">
-                <label for="emppass" class="form-label">Password</label>
-                <input type="password" class="form-control" placeholder="Enter Password" id="emppass" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100" id="createsubmit">Login</button>
+            <button type="submit" class="btn btn-primary w-100" id="createsubmit">Forget Password</button>
             <p class="d-block mt-2 text-danger" id="errorclass" style="display: none;"></p>
+            <p class="d-block mt-2 text-primary" id="infoclass" style="display: none;"></p>
             <div class="text-center" id="loader" style="display: none;">
                 <div class="spinner-grow text-muted"></div>
                 <div class="spinner-grow text-primary"></div>
@@ -35,7 +30,7 @@
                 <div class="spinner-grow text-dark"></div>
                 <div class="spinner-grow text-success"></div>
             </div>
-            <a href="forgetpass.html" class="text-decoration-none">Forget Password</a>
+            <a href="index.html" class="text-decoration-none">Already having Login?</a>
         </form>
     </div>
 
@@ -60,20 +55,16 @@
                 $("#loginForm button[type='submit']").prop('disabled', true);
 
                 const empid = $("#empid").val();
-                const emppass = $("#emppass").val();
 
-                if (empid && emppass) {
+                if (empid) {
                     $.ajax({
-                        url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?empid=${empid}&emppass=${emppass}&emplogin=true`,
+                        url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?empid=${empid}&forgetpass=true`,
                         type: "GET",
                         success: function (response) {
                             $("#loader").fadeOut();
                             $("#loginForm button[type='submit']").prop('disabled', false);
                             if(response.code == 200){
-                                //alert("Success");
-                                sessionStorage.setItem("empid", response.data.empid);
-                                sessionStorage.setItem("emptoken", response.data.empToken);
-                                window.location.href = `home.html`;
+                                window.location.href = `changepass.html?dG9rZW4x=${response.data.fgetToken}`;
                             }else{
                                 $("#errorclass").fadeIn();
                                 $("#errorclass").html(response.message);
@@ -87,7 +78,6 @@
                         }
                     });
                 } else {
-                    $("#loginForm button[type='submit']").prop('disabled', false);
                     //alert("Please fill out all fields.");
                     $("#errorclass").fadeIn();
                     $("#errorclass").html("Please fill out all fields.");
