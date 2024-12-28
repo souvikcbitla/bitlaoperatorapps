@@ -44,8 +44,15 @@
                         url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?empid=${empid}&emppass=${emppass}`,
                         type: "GET",
                         success: function (response) {
-                            alert("Success");
-                            console.log("Success:", response);
+                            if(response.code == 200){
+                                //alert("Success");
+                                // sessionStorage.setItem("empid", response.data.empid);
+                                // sessionStorage.setItem("emptoken", response.data.empToken);
+                                console.log("Success:", response.data.empid);
+                            }else{
+                                console.log("mmmm:", response.message);
+                            }
+                            
                         },
                         error: function (xhr, status, error) {
                             console.error("Error:", error);
