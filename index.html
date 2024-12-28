@@ -23,6 +23,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary w-100" id="createsubmit">Login</button>
+            <p class="bg-danger text-white" id="errorclass"></p>
         </form>
     </div>
 
@@ -33,6 +34,13 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script>
         $(document).ready(function() {
+            $("#errorclass").hide();
+            sessionempid = sessionStorage.getItem("empid");
+            sessionemptoken = sessionStorage.getItem("emptoken");
+            if(sessionempid && sessionemptoken){
+                window.location.href = `home.html`;
+            }
+
             $("#loginForm").submit(function(event) {
                 event.preventDefault();
 
@@ -46,11 +54,12 @@
                         success: function (response) {
                             if(response.code == 200){
                                 //alert("Success");
-                                // sessionStorage.setItem("empid", response.data.empid);
-                                // sessionStorage.setItem("emptoken", response.data.empToken);
-                                console.log("Success:", response.data.empid);
+                                sessionStorage.setItem("empid", response.data.empid);
+                                sessionStorage.setItem("emptoken", response.data.empToken);
+                                window.location.href = `home.html`;
                             }else{
-                                console.log("mmmm:", response.message);
+                                $("#errorclass").fadeIn();
+                                $("#errorclass").html(response.message);
                             }
                             
                         },
