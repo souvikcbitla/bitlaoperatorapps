@@ -37,20 +37,12 @@
                 event.preventDefault();
 
                 const empid = $("#empid").val();
-                const empemail = $("#empemail").val();
                 const emppass = $("#emppass").val();
 
-                if (empid && empemail && emppass) {
+                if (empid && emppass) {
                     $.ajax({
-                        url: "https://script.google.com/macros/s/AKfycbznneUz0Qfj6-pJ6YJ0NtmrslwOGFhOtsGCusqVXBIcS--TUQvHPdo6QzOdFwgQz5sk/exec",
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify({
-                            is_login: true,
-                            emp_id: empid,
-                            emp_email: empemail,
-                            emp_pass: emppass
-                        }),
+                        url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?empid=${empid}&emppass=${emppass}`,
+                        type: "GET",
                         success: function (response) {
                             alert("Success");
                             console.log("Success:", response);
