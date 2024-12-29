@@ -79,14 +79,20 @@
                                 return encodedToken;
                             }
                         } else {
+                            alert("Invalid Token!");
+                            window.location.href = `forgetpass.html`;
                             $('#errorclass').html('No token found in the URL.');
                             return false;
                         }
                     }catch (e) {
+                        alert("Invalid Token!");
+                        window.location.href = `forgetpass.html`;
                         $('#errorclass').html('Error decoding Base64:'+e);
                         return false;
                     }
                 }else{
+                    alert("Invalid Token!");
+                    window.location.href = `forgetpass.html`;
                     $('#errorclass').html('No token found in the URL.');
                     return false;
                 }

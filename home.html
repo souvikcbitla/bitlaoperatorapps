@@ -6,6 +6,9 @@
         <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
         <title>Operator Lists</title>
         <style>
+            body {
+                padding-top: 55px;  /* Adjust this value depending on the height of your navbar */
+            }
             .table-wrapper {
                 overflow-x: auto;
                 max-width: 100%;
@@ -30,11 +33,24 @@
             .count-section, .table-wrapper, #submitButton, .chart-container, .countdata {
                 display: none;
             }
+            #loader{
+                display: block;
+                position: fixed;
+                background: #00000054;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+                padding-top: 15%;
+            }
         </style>
     </head>
     <body>
-        
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" >
+        <div id="loader" class="text-center d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" >
             <a class="navbar-brand" href="#">Bitla Software</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +66,9 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="downloadScript.html">Download Script File</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="logout" href="javascript:void(0);">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -151,28 +170,6 @@
                 </table>
             </div>
             <button id="submitButton" class="btn btn-primary mt-5 mb-5 btn-block">Submit</button>
-
-            <div id="loader" class="text-center d-none" style="margin-top: 20%;">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="empIdModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Enter Employee ID</h5>
-                    </div>
-                    <div class="modal-body">
-                        <input type="text" id="empidInput" class="form-control" placeholder="Enter Employee ID">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="submitEmpId" class="btn btn-primary">Submit</button>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Modal -->
@@ -181,7 +178,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Build Number</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" id="responseModalClose">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -197,63 +194,32 @@
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             $(document).ready(function () {
-                
-                const storedEmpId = sessionStorage.getItem("empid");
-                if (storedEmpId) {
-                    loadDataTable(storedEmpId);
-                } else {
-                    $('#empIdModal').modal('show');
+                storedEmpId = sessionStorage.getItem("empid");
+                sessionemptoken = sessionStorage.getItem("emptoken");
+
+                if (!storedEmpId || !sessionemptoken) {
+                    window.location.href = "index.html";
+                }else{
+                    loadDataTable(storedEmpId,sessionemptoken);
                 }
-                
-                $('#responseModal').on('hidden.bs.modal', function () {
-                    location.reload();  // Reload the page
+
+                $("#logout").click(function(){
+                    sessionStorage.clear();
+                    window.location.href = "index.html";
                 });
                 
 
-                $('#submitEmpId').on('click', function () {
-                    const empid = $('#empidInput').val().trim();
-
-                    if (!empid) {
-                        alert("Please enter your Employee ID.");
-                        return;
-                    }
-
-                    // Show Loader
-                    $('#submitEmpId').prop("disabled", true);
+                function loadDataTable(empid, sessionemptoken) {
                     $('#loader').removeClass("d-none");
 
-                    const apiUrl = `https://script.google.com/macros/s/AKfycbznneUz0Qfj6-pJ6YJ0NtmrslwOGFhOtsGCusqVXBIcS--TUQvHPdo6QzOdFwgQz5sk/exec?is_json=true&empid=${empid}&user_agent=html`;
-
-                    $.get(apiUrl, function (response) {
-                        $('#submitEmpId').prop("disabled", false);
-                        $('#loader').addClass("d-none");
-
-                        if (response && response.app_lists) {
-                            // Store Employee ID in sessionStorage
-                            sessionStorage.setItem("empid", empid);
-
-                            $('#empIdModal').modal('hide');
-                            loadDataTable(empid);
-                        } else {
-                            alert("Invalid Employee ID!");
-                        }
-                    }).fail(function () {
-                        $('#submitEmpId').prop("disabled", false);
-                        $('#loader').addClass("d-none");
-                        alert("Error while connecting to API.");
-                    });
-                });
-
-                function loadDataTable(empid) {
                     $('.table-wrapper, .count-section, #submitButton, .countdata').show();
                     let selectedSubdomains = new Set();
 
                     const table = $('#example').DataTable({
                         ajax: {
-                            url: `https://script.google.com/macros/s/AKfycbznneUz0Qfj6-pJ6YJ0NtmrslwOGFhOtsGCusqVXBIcS--TUQvHPdo6QzOdFwgQz5sk/exec?is_json=true&empid=${empid}&user_agent=html`,
+                            url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?authtoken=${sessionemptoken}&fetch_entry=true&empid=${empid}`,
                             dataSrc: 'app_lists'
                         },
                         columns: [
@@ -325,7 +291,8 @@
                         }
 
                         $.ajax({
-                            url: `https://script.google.com/macros/s/AKfycbznneUz0Qfj6-pJ6YJ0NtmrslwOGFhOtsGCusqVXBIcS--TUQvHPdo6QzOdFwgQz5sk/exec?is_json=true&is_post=true&empid=${empid}&user_agent=html&subdomains=${Array.from(selectedSubdomains).join(',')}`,  // Update this to your API endpoint
+                            
+                            url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?authtoken=${sessionemptoken}&subdomains=${Array.from(selectedSubdomains).join(',')}&empid=${empid}`,  // Update this to your API endpoint
                             type: 'GET',
                             success: function (response) {
                                 $('#responseMessage').text(response.build_required);
@@ -338,6 +305,13 @@
                                 $('#loader').addClass("d-none");
                             }
                         });
+                    });
+
+                    $('#responseModalClose').on('click', function() {
+                        // Close the modal
+                        $('#responseModal').modal('hide');
+                        window.location.reload();
+                        
                     });
 
                     $('#example').on('click', '.editBtn', function () {
@@ -356,102 +330,52 @@
                     
                     // Calculate chart data based on table data
                     table.on('xhr', function () {
-                    const data = table.ajax.json().app_lists;
+                        const data = table.ajax.json().app_lists;
 
-                    // Initialize counters
-                    let buildCounts = {};
-                    let countryCounts = {};
+                        // Initialize counters
+                        let buildCounts = {};
+                        let countryCounts = {};
 
-                    // Loop through the data to aggregate counts
-                    data.forEach(item => {
-                        // Process the build_required field (Assumes each row has a single value for this field)
-                        const buildRequiredValue = item.build_required; // Just one value per row
-                        if (buildRequiredValue) {
-                            if (buildCounts[buildRequiredValue]) {
-                                buildCounts[buildRequiredValue]++;
-                            } else {
-                                buildCounts[buildRequiredValue] = 1;
-                            }
-                        }
-
-                        // Country-wise count
-                        const country = item.country_name || "Unknown";
-                        if (countryCounts[country]) {
-                            countryCounts[country]++;
-                        } else {
-                            countryCounts[country] = 1;
-                        }
-                    });
-
-                    // Build chart data
-                    const chartData = {
-                        totalCount: data.length,
-                        buildNumber: buildCounts,
-                        countryWise: countryCounts
-                    };
-
-                    // Create the chart
-                    const ctx = document.getElementById('myChart').getContext('2d');
-                    const myChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: [
-                                ...Object.keys(chartData.buildNumber), // Build counts dynamically added
-                                ...Object.keys(chartData.countryWise) // Country names dynamically added
-                            ],
-                            datasets: [{
-                                label: 'Counts',
-                                data: [
-                                    ...Object.values(chartData.buildNumber), // Build counts dynamically added
-                                    ...Object.values(chartData.countryWise) // Country counts dynamically added
-                                ],
-                                backgroundColor: [
-                                    'rgba(75, 192, 192, 0.2)',
-                                    'rgba(255, 99, 132, 0.2)',
-                                    'rgba(54, 162, 235, 0.2)',
-                                    'rgba(153, 102, 255, 0.2)',
-                                    'rgba(255, 159, 64, 0.2)'
-                                ],
-                                borderColor: [
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
-                                ],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: true
+                        // Loop through the data to aggregate counts
+                        data.forEach(item => {
+                            // Process the build_required field (Assumes each row has a single value for this field)
+                            const buildRequiredValue = item.build_required; // Just one value per row
+                            if (buildRequiredValue) {
+                                if (buildCounts[buildRequiredValue]) {
+                                    buildCounts[buildRequiredValue]++;
+                                } else {
+                                    buildCounts[buildRequiredValue] = 1;
                                 }
                             }
+
+                            // Country-wise count
+                            const country = item.country_name || "Unknown";
+                            if (countryCounts[country]) {
+                                countryCounts[country]++;
+                            } else {
+                                countryCounts[country] = 1;
+                            }
+                        });
+                        
+                        // Display total count
+                        $('#totalCount').text(data.length);
+
+                        // Display Build Required Counts
+                        let buildRequiredHtml = '';
+                        for (let build in buildCounts) {
+                            buildRequiredHtml += `<tr><td>${build}</td> <td>${buildCounts[build]}</td></tr>`;
                         }
+                        $('#buildRequiredCounts').html(buildRequiredHtml);
+
+                        // Display Country Wise Counts
+                        let countryWiseHtml = '';
+                        for (let country in countryCounts) {
+                            countryWiseHtml += `<tr><td>${country}</td> <td> ${countryCounts[country]}</td></tr>`;
+                        }
+                        $('#countryWiseCounts').html(countryWiseHtml);
+
+                        $('#loader').addClass("d-none");
                     });
-                    // Display total count
-                    $('#totalCount').text(data.length);
-
-                    // Display Build Required Counts
-                    let buildRequiredHtml = '';
-                    for (let build in buildCounts) {
-                        buildRequiredHtml += `<tr><td>${build}</td> <td>${buildCounts[build]}</td></tr>`;
-                    }
-                    $('#buildRequiredCounts').html(buildRequiredHtml);
-
-                    // Display Country Wise Counts
-                    let countryWiseHtml = '';
-                    for (let country in countryCounts) {
-                        countryWiseHtml += `<tr><td>${country}</td> <td> ${countryCounts[country]}</td></tr>`;
-                    }
-                    $('#countryWiseCounts').html(countryWiseHtml);
-
-
-
-                });
-
                 }
             });
 
