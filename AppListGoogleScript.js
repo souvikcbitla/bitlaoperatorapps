@@ -11,25 +11,27 @@ function doGet(req) {
     var update_entry = req.parameter.update_entry === 'true';
     var create_entry = req.parameter.create_entry === 'true';
     var fetch_entry = req.parameter.fetch_entry === 'true';
+    var fetch_only_subdomain = req.parameter.fetch_only_subdomain === 'true';
     var build_number_generate = req.parameter.build_number_generate === 'true';
     var forgetpass = req.parameter.forgetpass === 'true';
     var emplogin = req.parameter.emplogin === 'true';
     var datahash = req.parameter.datahash;
 
-    // var authtoken = "QlMxNjE0OjE3MzU0MDUxMjYyNDY6NDkzMzdrMDY3NDgx";
+    // var authtoken = "QlMxNjE0OjE3MzU1ODEwMzIwOTM6OTEzNjI3";
     // var empid = "BS1614";
     // var is_from_script = false;
     // var emppass = "";
     // var emphash = "";
     // var subdomains = "";
-    // var subdomain = "";
+    // var subdomain = "adtb";
     // var build_number = "";
     // var update_entry = false;
     // var create_entry = false;
     // var fetch_entry = false;
-    // var forgetpass = true;
+    // var forgetpass = false;
+    // var fetch_only_subdomain = true;
     // var datahash = "";
-    // var newPass = "11"
+    // var newPass = ""
 
 
     var appListsSheet = fetchAppSheet();
@@ -91,6 +93,17 @@ function doGet(req) {
         var response = isValidToken(credentialSheet,authtoken, empid);
         console.log("00"+JSON.stringify(response));
         if (response.code === 200) {
+            if(fetch_only_subdomain && typeof subdomain === 'string' && subdomain.trim() !== ""){
+                return fetchOnlySubdomain(appListsSheet,subdomain);
+            }
+
+            if(update_entry && typeof subdomain === 'string' && subdomain.trim() !== "" && typeof datahash === 'string' && datahash.trim() !== ""){
+                // Consider update the entry with valid subdomain and also whatever data send only those data will update 
+                console.log("44");
+                return updateOperatorEntry(appListsSheet,subdomain,datahash);
+
+            }
+
             if(authtoken!="" && fetch_entry){
                 // Consider this is first fetch data to show in front UI
                 console.log("11");
@@ -106,12 +119,7 @@ function doGet(req) {
                 console.log("33");
                 return newOperatorEntry(datahash);
 
-            }else if(authtoken!="" && update_entry && datahash!="" && subdomain!=""){
-                // Consider update the entry with valid subdomain and also whatever data send only those data will update 
-                console.log("44");
-                return updateOperatorEntry(subdomain,datahash);
-
-            }else{
+            } else{
                 console.log("55");
                 // Throw error as there are no matching requests.
                 return createJsonResponse("No matching requests!",true);
@@ -545,10 +553,90 @@ function buildNumberGeneration(appListsSheet,subdomains){
     return ContentService.createTextOutput(JSON.stringify(responseObject)).setMimeType(ContentService.MimeType.JSON);
 }
 
+function fetchOnlySubdomain(appListsSheet,subdomain){
+    var values = appListsSheet.getDataRange().getValues();
+    var filteredRows = values.slice(1).filter(row => row[3]==subdomain);
+    
+    var responseObject = {
+        code: 200,
+        message: "Active App Lists",
+        app_lists: filteredRows.map(function(row) {
+            return {
+            build_required: row[0],
+            version: row[1],
+            version_code: row[2],
+            sub_domain: row[3].toString().trim(),
+            key_file_name: row[4].toString(),
+            alias_name: row[5].toString(),
+            password: row[6].toString().trim(),
+            android_package_name: row[7].toString(),
+            operator_name: row[8].toString(),
+            base_url: row[9].toString().trim(),
+            country_name: row[10].toString().trim(),
+            developer_name: row[11] ? row[11].toString().trim() : "-",
+            last_app_published_date: row[12] ? row[12].toString().trim() : "-",
+            playstore_link: row[13] ? row[13].toString().trim() : "-",
+            region: row[14] ? row[14].toString().trim() : "-",
+            analytics_email: row[15] ? row[15].toString().trim() : "-",
+            analytics_property: row[16] ? row[16].toString().trim() : "-"
+            };
+        })
+    };
+    console.log(responseObject);
+    return ContentService.createTextOutput(JSON.stringify(responseObject)).setMimeType(ContentService.MimeType.JSON);
+}
+
 function newOperatorEntry(datahash){
 
 }
 
-function updateOperatorEntry(subdomain,datahash){
+// function updateOperatorEntry(appListsSheet,oldsubdomain,datahash){
+//     var values = appListsSheet.getDataRange().getValues();
+//     var filteredRows = values.slice(1).filter(row => row[3]==oldsubdomain);
+//     var originalRowIndex = findRowBySubdomain(oldsubdomain, values);
 
+//     return createJsonResponse("Update Credentials!",true);
+// }
+
+function updateOperatorEntry(appListsSheet, oldsubdomain, datahash) {
+    try {
+        // Decrypt datahash (assumes Base64 encoded JSON string)
+        var decryptedData = JSON.parse(Utilities.newBlob(Utilities.base64Decode(datahash)).getDataAsString());
+
+        // Get all data from the sheet
+        var values = appListsSheet.getDataRange().getValues();
+
+        // Find the original row index (adjusted for header)
+        var originalRowIndex = findRowBySubdomain(oldsubdomain, values);
+        if (originalRowIndex === -1) {
+            return createJsonResponse("Subdomain not found!", false);
+        }
+
+        // Update the row with new data
+        var updatedRow = values[originalRowIndex];
+        updatedRow[3] = decryptedData.subDomain;       // Assuming column D is Sub Domain
+        updatedRow[4] = decryptedData.keyFile;        // Assuming column E is Key File Name
+        updatedRow[5] = decryptedData.aliasName;      // Assuming column F is Alias Name
+        updatedRow[6] = decryptedData.password;       // Assuming column G is Password
+        updatedRow[7] = decryptedData.packageName;    // Assuming column H is Package Name
+        updatedRow[8] = decryptedData.operatorName;   // Assuming column I is Operator Name
+        updatedRow[9] = decryptedData.baseUrl;        // Assuming column J is Base URL
+        updatedRow[10] = decryptedData.country;        // Assuming column K is Country
+        updatedRow[11] = decryptedData.developerName;  // Assuming column L is Developer Name
+        updatedRow[13] = decryptedData.playStoreLink;  // Assuming column N is Play Store Link
+        updatedRow[14] = decryptedData.region;        // Assuming column O is Region
+        updatedRow[15] = decryptedData.analyticsEmail; // Assuming column P is Analytics Email
+        updatedRow[16] = decryptedData.analyticsProperty; // Assuming column Q is Analytics Property
+
+        // Update the row in the sheet
+        var range = appListsSheet.getRange(originalRowIndex + 1, 1, 1, updatedRow.length);
+        range.setValues([updatedRow]);
+        console.log(updatedRow);
+        // Return success response
+        return createJsonResponse("Update successful!", true);
+
+    } catch (error) {
+        console.log(error.message);
+        return createJsonResponse(`Error updating data: ${error.message}`, false);
+    }
 }
