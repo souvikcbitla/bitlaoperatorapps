@@ -1,7 +1,6 @@
 function doGet(req) {
     var empid = req.parameter.empid;
     var emppass = req.parameter.emppass;
-    var emphash = req.parameter.emphash;
     var authtoken = req.parameter.authtoken;
     var subdomains = req.parameter.subdomains;
     var subdomain = req.parameter.subdomain;
@@ -12,25 +11,24 @@ function doGet(req) {
     var create_entry = req.parameter.create_entry === 'true';
     var fetch_entry = req.parameter.fetch_entry === 'true';
     var fetch_only_subdomain = req.parameter.fetch_only_subdomain === 'true';
-    var build_number_generate = req.parameter.build_number_generate === 'true';
     var forgetpass = req.parameter.forgetpass === 'true';
     var emplogin = req.parameter.emplogin === 'true';
     var datahash = req.parameter.datahash;
 
-    // var authtoken = "QlMxNjE0OjE3MzU1ODEwMzIwOTM6OTEzNjI3";
+    // var authtoken = "QlMxNjE0OjE3MzU5MTc0ODA4NjI6MjAwNjkw";
     // var empid = "BS1614";
     // var is_from_script = false;
     // var emppass = "";
-    // var emphash = "";
     // var subdomains = "";
-    // var subdomain = "adtb";
+    // var subdomain = "aadi";
     // var build_number = "";
-    // var update_entry = false;
+    // var update_entry = true;
     // var create_entry = false;
     // var fetch_entry = false;
     // var forgetpass = false;
-    // var fetch_only_subdomain = true;
-    // var datahash = "";
+    // var fetch_only_subdomain = false;
+    // var emplogin = false;
+    // var datahash = "eyJzdWJEb21haW4iOiJhYWRpIiwia2V5RmlsZSI6ImFhZGlzaGFrdGl0cmF2ZWxzLmprcyIsImFsaWFzTmFtZSI6ImFhZGlzaGFrdGl0cmF2ZWxzIiwicGFzc3dvcmQiOiJhbmRyb2lkMTIzIiwicGFja2FnZU5hbWUiOiJjb20uYml0bGEubWJhLmFhZGlzaGFrdGl0cmF2ZWxzIiwib3BlcmF0b3JOYW1lIjoiQWFkaXNoYWt0aSBUcmF2ZWxzZCIsImJhc2VVcmwiOiJodHRwczovL2FhZGkudGlja2V0c2ltcGx5LmNvbSIsImNvdW50cnkiOiJOIiwiZGV2ZWxvcGVyTmFtZSI6IkFhZGlzaGFrdGkgVHJhdmVscyIsInBsYXlTdG9yZUxpbmsiOiJodHRwczovL3BsYXkuZ29vZ2xlLmNvbS9zdG9yZS9hcHBzL2RldGFpbHM%2FaWQ9Y29tLmJpdGxhLm1iYS5hYWRpc2hha3RpdHJhdmVscyIsInJlZ2lvbiI6IlV0dGFyIFByYWRlc2giLCJhbmFseXRpY3NFbWFpbCI6ImJpdGxhbWJhYW5hbHl0aWNzMkBnbWFpbC5jb20iLCJhbmFseXRpY3NQcm9wZXJ0eSI6IkN1c3RvbWVyIEFwcCBHcm91cC1jIiwidmVyc2lvbl9uYW1lIjoiMTUuMiIsInZlcnNpb25fY29kZSI6IjE1MSIsInBsYXlzdG9yZV91cGxvYWRfZGF0ZSI6IjIwMjMtMDgtMTcifQ%3D%3D";
     // var newPass = ""
 
 
@@ -99,8 +97,15 @@ function doGet(req) {
 
             if(update_entry && typeof subdomain === 'string' && subdomain.trim() !== "" && typeof datahash === 'string' && datahash.trim() !== ""){
                 // Consider update the entry with valid subdomain and also whatever data send only those data will update 
-                console.log("44");
+                // console.log("44");
                 return updateOperatorEntry(appListsSheet,subdomain,datahash);
+
+            }
+
+            if(create_entry && typeof datahash === 'string' && datahash.trim() !== ""){
+                // Consider this is new entry should append on the last row of excel
+                console.log("33");
+                return newOperatorEntry(appListsSheet,datahash);
 
             }
 
@@ -113,11 +118,6 @@ function doGet(req) {
                 // Consider this is required to generate Build Number
                 console.log("22");
                 return buildNumberGeneration(appListsSheet,subdomains);
-
-            }else if(authtoken!="" && create_entry && datahash!=""){
-                // Consider this is new entry should append on the last row of excel
-                console.log("33");
-                return newOperatorEntry(datahash);
 
             } else{
                 console.log("55");
@@ -314,19 +314,25 @@ function getFormattedDate(setdays=true,dvalue=2,setmin=false) {
     return timestamp;
 }
 
-function sendOtpEmail(recipient,otp) {
-    var subject = "Your One-Time Password (OTP) for Account Verification";  // Email subject
-    
-    // Email body with OTP
-    var body = `
-      <p>Dear User,</p>
-      <p>We received a request to verify your account. Please use the following One-Time Password (OTP) to complete the process:</p>
-      <p><strong>OTP: ${otp}</strong></p>
-      <p>This OTP is valid for 10 minutes only and can only be used once.</p>
-      <p>If you did not request this OTP, please ignore this email or contact support immediately.</p>
-      <p>Thank you,<br>The Support Team</p>
-    `;  // HTML email body
-  
+function sendOtpEmail(recipient,otp,updateEmail=false,update_subject="",oldData="",newData="") {
+
+    if(updateEmail){
+        var subject = update_subject;
+        var body = createComparisonTable(oldData, newData);
+        console.log(body);
+    }else{
+        var subject = "Your One-Time Password (OTP) for Account Verification";  // Email subject
+        
+        // Email body with OTP
+        var body = `
+        <p>Dear User,</p>
+        <p>We received a request to verify your account. Please use the following One-Time Password (OTP) to complete the process:</p>
+        <p><strong>OTP: ${otp}</strong></p>
+        <p>This OTP is valid for 10 minutes only and can only be used once.</p>
+        <p>If you did not request this OTP, please ignore this email or contact support immediately.</p>
+        <p>Thank you,<br>The Support Team</p>
+        `;  // HTML email body
+    }
     // Send the OTP email
     MailApp.sendEmail({
       to: recipient,
@@ -335,7 +341,40 @@ function sendOtpEmail(recipient,otp) {
       htmlBody: body  // HTML version of the body
     });
   
-    Logger.log("OTP email sent successfully to " + recipient);
+    // Logger.log("OTP email sent successfully to " + recipient);
+}
+
+function createComparisonTable(oldData, newData) {
+    var headers = [
+        "Build Required", "Version", "Version Code", "Sub Domain", "Key File", 
+        "Alias Name", "Password", "Package Name", "Operator Name", "Base Url", 
+        "Country selection", "Developer Name", "Last Updated On", "Google Play Store Link", 
+        "Region", "Analytics Email id", "Analytics Property Name"
+    ];
+    
+    var table = '<table border="1" style="border-collapse:collapse; width:100%;">';
+    table += '<tr><th>Field</th><th>Old Data</th><th>New Data</th></tr>';
+
+    for (var i = 0; i < headers.length; i++) {
+        const oldValue = oldData[i] || 'N/A';
+        const newValue = newData[i] || 'N/A';
+        const isChanged = oldValue !== newValue;
+        
+        table += `<tr>
+                    <td>${headers[i]}</td>
+                    <td>${oldValue}</td>
+                    <td style="${isChanged ? 'background-color: red; color: white;' : ''}">${newValue}</td>
+                  </tr>`;
+    }
+
+    table += '</table>';
+    return `<div>
+                <p>Dear Team,</p>
+                <p>The following data has been updated:</p>
+                ${table}
+                <p>Best regards,</p>
+                <p>Your System</p>
+            </div>`;
 }
   
 // Function to generate a random 6-digit OTP
@@ -574,7 +613,7 @@ function fetchOnlySubdomain(appListsSheet,subdomain){
             base_url: row[9].toString().trim(),
             country_name: row[10].toString().trim(),
             developer_name: row[11] ? row[11].toString().trim() : "-",
-            last_app_published_date: row[12] ? row[12].toString().trim() : "-",
+            last_app_published_date: row[12] ? formatDate(row[12].toString().trim()) : "-",
             playstore_link: row[13] ? row[13].toString().trim() : "-",
             region: row[14] ? row[14].toString().trim() : "-",
             analytics_email: row[15] ? row[15].toString().trim() : "-",
@@ -586,34 +625,33 @@ function fetchOnlySubdomain(appListsSheet,subdomain){
     return ContentService.createTextOutput(JSON.stringify(responseObject)).setMimeType(ContentService.MimeType.JSON);
 }
 
-function newOperatorEntry(datahash){
-
-}
-
-// function updateOperatorEntry(appListsSheet,oldsubdomain,datahash){
-//     var values = appListsSheet.getDataRange().getValues();
-//     var filteredRows = values.slice(1).filter(row => row[3]==oldsubdomain);
-//     var originalRowIndex = findRowBySubdomain(oldsubdomain, values);
-
-//     return createJsonResponse("Update Credentials!",true);
-// }
-
 function updateOperatorEntry(appListsSheet, oldsubdomain, datahash) {
     try {
         // Decrypt datahash (assumes Base64 encoded JSON string)
-        var decryptedData = JSON.parse(Utilities.newBlob(Utilities.base64Decode(datahash)).getDataAsString());
-
+        var decodedBase64 = decodeURIComponent(datahash); // Step 1: Decode the URL-safe string
+        var jsonString = Utilities.newBlob(Utilities.base64Decode(decodedBase64)).getDataAsString(); // Step 2: Base64 decode
+        var decryptedData = JSON.parse(jsonString);
+        //console.log(decryptedData);
         // Get all data from the sheet
         var values = appListsSheet.getDataRange().getValues();
+
+        // console.log(values);
 
         // Find the original row index (adjusted for header)
         var originalRowIndex = findRowBySubdomain(oldsubdomain, values);
         if (originalRowIndex === -1) {
             return createJsonResponse("Subdomain not found!", false);
         }
-
-        // Update the row with new data
-        var updatedRow = values[originalRowIndex];
+        // console.log(originalRowIndex);
+        var oldData = values[originalRowIndex-1];
+        oldData[12] = formatDate(oldData[12]);
+        // console.log("oldd=>",oldData);
+        //Update the row with new data
+        var updatedRow = [...oldData];
+        // var updatedRow = values[originalRowIndex];
+        // console.log("updatedRow=>",updatedRow);
+        updatedRow[1] = decryptedData.version_name;    // Assuming column B is Version Name
+        updatedRow[2] = decryptedData.version_code;    // Assuming column C is Version Code
         updatedRow[3] = decryptedData.subDomain;       // Assuming column D is Sub Domain
         updatedRow[4] = decryptedData.keyFile;        // Assuming column E is Key File Name
         updatedRow[5] = decryptedData.aliasName;      // Assuming column F is Alias Name
@@ -623,20 +661,92 @@ function updateOperatorEntry(appListsSheet, oldsubdomain, datahash) {
         updatedRow[9] = decryptedData.baseUrl;        // Assuming column J is Base URL
         updatedRow[10] = decryptedData.country;        // Assuming column K is Country
         updatedRow[11] = decryptedData.developerName;  // Assuming column L is Developer Name
+        updatedRow[12] = formatDate(decryptedData.playstore_upload_date); // Assuming column M is Play Store Upload Date
         updatedRow[13] = decryptedData.playStoreLink;  // Assuming column N is Play Store Link
         updatedRow[14] = decryptedData.region;        // Assuming column O is Region
         updatedRow[15] = decryptedData.analyticsEmail; // Assuming column P is Analytics Email
         updatedRow[16] = decryptedData.analyticsProperty; // Assuming column Q is Analytics Property
 
         // Update the row in the sheet
-        var range = appListsSheet.getRange(originalRowIndex + 1, 1, 1, updatedRow.length);
+        var range = appListsSheet.getRange(originalRowIndex, 1, 1, updatedRow.length);
         range.setValues([updatedRow]);
+        console.log(oldData);
         console.log(updatedRow);
+        sendOtpEmail("souvik.c@bitlasoft.com","",true,"App Lists (Excel): Data Update Notification",oldData,updatedRow)
         // Return success response
-        return createJsonResponse("Update successful!", true);
+        return createJsonResponse("Update successful!", true,200);
 
     } catch (error) {
         console.log(error.message);
         return createJsonResponse(`Error updating data: ${error.message}`, false);
     }
+}
+
+function newOperatorEntry(appListsSheet, datahash) {
+    try {
+        // Decrypt datahash (assumes Base64 encoded JSON string)
+        var decodedBase64 = decodeURIComponent(datahash); // Step 1: Decode the URL-safe string
+        var jsonString = Utilities.newBlob(Utilities.base64Decode(decodedBase64)).getDataAsString(); // Step 2: Base64 decode
+        var decryptedData = JSON.parse(jsonString);
+
+        // Get all data from the sheet
+        var values = appListsSheet.getDataRange().getValues();
+
+        // Check if subDomain or packageName exists
+        var rowIndex = findRowBySubdomainOrPackageName(decryptedData.subDomain, decryptedData.packageName, values);
+
+        if (rowIndex === -1) {
+            // Subdomain or packageName not found, insert a new row at the end
+            var newRow = [
+                200,                               // Build Required
+                decryptedData.versionName || "", // Version
+                decryptedData.versionCode || "", // Version Code
+                decryptedData.subDomain || "",   // Sub Domain
+                decryptedData.keyFile || "",     // Key File
+                decryptedData.aliasName || "",   // Alias Name
+                decryptedData.password || "",    // Password
+                decryptedData.packageName || "", // Package Name
+                decryptedData.operatorName || "", // Operator Name
+                decryptedData.baseUrl || "",     // Base URL
+                decryptedData.country || "",     // Country Selection
+                decryptedData.developerName || "", // Developer Name
+                formatDate(decryptedData.playStoreUploadDate|| new Date().toLocaleDateString()), // Last Updated On
+                decryptedData.playStoreLink || "", // Google Play Store Link
+                decryptedData.region || "",      // Region
+                decryptedData.analyticsEmail || "", // Analytics Email ID
+                decryptedData.analyticsProperty || "" // Analytics Property Name
+            ];
+
+            // Append the new row
+            appListsSheet.appendRow(newRow);
+
+            // Return success response
+            return createJsonResponse("New entry added successfully!", true, 200);
+        } else {
+           
+            return createJsonResponse("Already Exists in the lists. Kindly cross check", true, 400);
+        }
+    } catch (error) {
+        console.log(error.message);
+        return createJsonResponse(`Error updating data: ${error.message}`, false);
+    }
+}
+
+// Helper function to find row index by subDomain or packageName
+function findRowBySubdomainOrPackageName(subDomain, packageName, values) {
+    for (var i = 1; i < values.length; i++) { // Skip header row
+        if (values[i][3] === subDomain || values[i][7] === packageName) { // Assuming columns D and H
+            return i; // Return row index
+        }
+    }
+    return -1; // Not found
+}
+
+function formatDate(inputDate) {
+    const date = new Date(inputDate); // Convert the input string to a Date object
+    return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+    });
 }

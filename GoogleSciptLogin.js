@@ -8,8 +8,8 @@ function doPost(req) {
     
         // var jsonData = JSON.parse(req.postData.contents);
         var empid = "BS1614"; //jsonData.empid;
-        var empemail = "souvik.c@bitlasoft.com"; //jsonData.empemail;
-        var emppassword = "Bitla@123";
+        var empemail = ""; //jsonData.empemail;
+        var emppassword = "";
     
         // Generate and validate token
         var token = generateAccessToken(empid);

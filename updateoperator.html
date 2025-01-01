@@ -56,13 +56,19 @@
             
             <form id="UpdateForm">
                 <div class="form-row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-6">
                         <div class="form-group">
-                            <label for="subDomain">Sub Domain</label>
-                            <input type="text" class="form-control" id="subDomain" placeholder="Enter Sub Domain">
+                            <label for="operatorName">Operator Name</label>
+                            <input type="text" class="form-control" id="operatorName" placeholder="Enter Operator Name" required>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="subDomain">Sub Domain</label>
+                            <input type="text" class="form-control" id="subDomain" placeholder="Enter Sub Domain" required>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="form-group">
                             <label for="country">Country</label>
                             <select class="form-control" id="country">
@@ -73,70 +79,84 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="keyFile">Key File Name</label>
-                    <input type="text" class="form-control" id="keyFile" placeholder="Enter Key File Name">
-                </div>
-                
                 <div class="form-row">
-                    <div class="col-md-6 mb-3">
-                        <label for="aliasName">Alias Name</label>
-                        <input type="text" class="form-control" id="aliasName" placeholder="Enter Alias Name">
+                    <div class="col-md-2">
+                        <label for="version_name">Version</label>
+                        <input type="text" class="form-control" id="version_name" placeholder="Enter Version Name" required>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label for="password">Key Password</label>
-                        <input type="text" class="form-control" id="password" placeholder="Enter Password">
+                    <div class="col-md-2">
+                        <label for="version_code">Version Code</label>
+                        <input type="text" class="form-control" id="version_code" placeholder="Enter Version Code" required>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="packageName">Package Name</label>
-                            <input type="text" class="form-control" id="packageName" placeholder="Enter Package Name">
+                            <input type="text" class="form-control" id="packageName" placeholder="Enter Package Name" required>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4">
                         <div class="form-group">
                             <label for="developerName">Developer Name</label>
-                            <input type="text" class="form-control" id="developerName" placeholder="Enter Developer Name">
+                            <input type="text" class="form-control" id="developerName" placeholder="Enter Developer Name" required>
                         </div>
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4">
                         <div class="form-group">
-                            <label for="operatorName">Operator Name</label>
-                            <input type="text" class="form-control" id="operatorName" placeholder="Enter Operator Name">
+                            <label for="keyFile">Key File Name</label>
+                            <input type="text" class="form-control" id="keyFile" placeholder="Enter Key File Name" required>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4">
+                        <label for="aliasName">Alias Name</label>
+                        <input type="text" class="form-control" id="aliasName" placeholder="Enter Alias Name" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="password">Key Password</label>
+                        <input type="text" class="form-control" id="password" placeholder="Enter Password" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="baseUrl">Base URL</label>
-                            <input type="url" class="form-control" id="baseUrl" placeholder="Enter Base URL">
+                            <input type="url" class="form-control" id="baseUrl" placeholder="Enter Base URL" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="region">Region</label>
+                            <input type="text" class="form-control" id="region" placeholder="Enter Region" required>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="playStoreLink">Google Play Store Link</label>
-                    <input type="url" class="form-control" id="playStoreLink" placeholder="Enter Play Store Link">
-                </div>
-    
-                <div class="form-group">
-                    <label for="region">Region</label>
-                    <input type="text" class="form-control" id="region" placeholder="Enter Region">
-                </div>
                 <div class="form-row">
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-8">
                         <div class="form-group">
-                            <label for="analyticsEmail">Analytics Email ID</label>
-                            <input type="email" class="form-control" id="analyticsEmail" placeholder="Enter Analytics Email">
+                            <label for="playStoreLink">Google Play Store Link</label>
+                            <input type="url" class="form-control" id="playStoreLink" placeholder="Enter Play Store Link" required>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="playstore_update_date">Play Store Upload Date</label>
+                            <input type="date" class="form-control" id="playstore_update_date" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="analyticsEmail">Analytics Email ID</label>
+                            <input type="email" class="form-control" id="analyticsEmail" placeholder="Enter Analytics Email" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label for="analyticsProperty">Analytics Property Name</label>
-                            <input type="text" class="form-control" id="analyticsProperty" placeholder="Enter Analytics Property Name">
+                            <input type="text" class="form-control" id="analyticsProperty" placeholder="Enter Analytics Property Name" required>
                         </div>
                     </div>
                 </div>
@@ -218,6 +238,22 @@
                     }
                 }
                 
+                // function fillForm(appData) {
+                //     $("#subDomain").val(appData.sub_domain);
+                //     $("#keyFile").val(appData.key_file_name);
+                //     $("#aliasName").val(appData.alias_name);
+                //     $("#password").val(appData.password);
+                //     $("#packageName").val(appData.android_package_name);
+                //     $("#operatorName").val(appData.operator_name);
+                //     $("#baseUrl").val(appData.base_url);
+                //     $("#country").val(appData.country_name);
+                //     $("#developerName").val(appData.developer_name);
+                //     $("#playStoreLink").val(appData.playstore_link);
+                //     $("#region").val(appData.region);
+                //     $("#analyticsEmail").val(appData.analytics_email);
+                //     $("#analyticsProperty").val(appData.analytics_property);
+                // }
+
                 function fillForm(appData) {
                     $("#subDomain").val(appData.sub_domain);
                     $("#keyFile").val(appData.key_file_name);
@@ -232,6 +268,22 @@
                     $("#region").val(appData.region);
                     $("#analyticsEmail").val(appData.analytics_email);
                     $("#analyticsProperty").val(appData.analytics_property);
+                    $("#version_name").val(appData.version); // Populate Version Name
+                    $("#version_code").val(appData.version_code); // Populate Version Code
+                    if (appData.last_app_published_date) {
+                        try {
+                            const date = new Date(appData.last_app_published_date);
+                            if (!isNaN(date.getTime())) {
+                                // Adjust for local timezone
+                                const adjustedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+                                $("#playstore_update_date").val(adjustedDate.toISOString().split("T")[0]);
+                            } else {
+                                console.error("Invalid date format for last_app_published_date:", appData.last_app_published_date);
+                            }
+                        } catch (error) {
+                            console.error("Error parsing last_app_published_date:", error);
+                        }
+                    }
                 }
 
                 $("#UpdateForm").submit(function (event) {
@@ -253,6 +305,9 @@
                         region: $("#region").val(),
                         analyticsEmail: $("#analyticsEmail").val(),
                         analyticsProperty: $("#analyticsProperty").val(),
+                        version_name: $("#version_name").val(), // Collect Version Name
+                        version_code: $("#version_code").val(), // Collect Version Code
+                        playstore_upload_date: $("#playstore_update_date").val(), // Collect Play Store Upload Date
                     };
                     const formDataString = JSON.stringify(formData);
                     //console.log(btoa(formDataString));
