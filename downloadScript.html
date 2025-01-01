@@ -19,10 +19,16 @@
                         <a class="nav-link" href="index.html">Home</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="createoperator.html">Create New Operator</a>
                     </li>
                     <li class="nav-item active">
                         <a class="nav-link" href="downloadScript.html">Download Script File</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="logout" href="javascript:void(0);">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -481,9 +487,23 @@
 
         <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
+        
         <script>
             $(document).ready(function () {
+                storedEmpId = sessionStorage.getItem("empid");
+                sessionemptoken = sessionStorage.getItem("emptoken");
+                var oldSubdomain = "";
+
+                if (!storedEmpId || !sessionemptoken) {
+                    window.location.href = "index.html";
+                }
+                
+                $("#logout").click(function(){
+                    sessionStorage.clear();
+                    window.location.href = "index.html";
+                });
+
+
                 $('#fileForm').submit(function (e) {
                     e.preventDefault();
 

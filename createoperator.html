@@ -38,6 +38,9 @@
                         <a class="nav-link" href="index.html">Home</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">Dashboard</a>
+                    </li>
+                    <li class="nav-item active">
                         <a class="nav-link" href="createoperator.html">Create New Operator</a>
                     </li>
                     <li class="nav-item">
@@ -207,24 +210,24 @@
                         analyticsProperty: $("#analyticsProperty").val() // Analytics Property Name
                     };
                     const formDataString = JSON.stringify(formData);
-                    console.log(btoa(formDataString));
+                    // console.log(btoa(formDataString));
                     const formDataBase64 = encodeURIComponent(btoa(formDataString));
                     // console.log(formDataBase64);
-                    // console.log(`https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?create_entry=true&authtoken=${sessionemptoken}&empid=${storedEmpId}&datahash=${formDataBase64}`);
+                    // console.log(`https://script.google.com/macros/s/AKfycbxYfyiL-Ns_VK1t0K37dnt5ryTLM9a5fH4FlKdOnBo3rbCNpFu9iIifuRqVWXy_mIAhGQ/exec?create_entry=true&authtoken=${sessionemptoken}&empid=${storedEmpId}&datahash=${formDataBase64}`);
                     // $("#UpdateForm button[type='submit']").prop('disabled', false);
                     // $('#loader').addClass("d-none");
                     $.ajax({
-                        url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?create_entry=true&authtoken=${sessionemptoken}&empid=${storedEmpId}&datahash=${formDataBase64}`,
+                        url: `https://script.google.com/macros/s/AKfycbxYfyiL-Ns_VK1t0K37dnt5ryTLM9a5fH4FlKdOnBo3rbCNpFu9iIifuRqVWXy_mIAhGQ/exec?create_entry=true&authtoken=${sessionemptoken}&empid=${storedEmpId}&datahash=${formDataBase64}`,
                         type: 'GET',
                         success: function (response) {
                             $("#UpdateForm button[type='submit']").prop('disabled', false);
                             if(response.code == 200){
-                                console.log(response);
+                                // console.log(response);
                                 //$('#loader').addClass("d-none");
                                 alert(response.message);
                                 window.location.href = "home.html";
                             }else{
-                                console.log(response.message);
+                                // console.log(response.message);
                                 alert(response.message);
                                 $('#loader').addClass("d-none");
                             }
@@ -233,7 +236,7 @@
                         error: function (xhr, status, error) {
                             $("#UpdateForm button[type='submit']").prop('disabled', false);
                             alert(`Error: ${error}`);
-                            console.log(`Error: ${error}`);
+                            // console.log(`Error: ${error}`);
                             $('#loader').addClass("d-none");
                         }
                     });
