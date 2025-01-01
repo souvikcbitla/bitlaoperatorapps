@@ -235,7 +235,7 @@
 
                     const table = $('#example').DataTable({
                         ajax: {
-                            url: `https://script.google.com/macros/s/AKfycbxYfyiL-Ns_VK1t0K37dnt5ryTLM9a5fH4FlKdOnBo3rbCNpFu9iIifuRqVWXy_mIAhGQ/exec?authtoken=${sessionemptoken}&fetch_entry=true&empid=${empid}`,
+                            url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?authtoken=${sessionemptoken}&fetch_entry=true&empid=${empid}`,
                             dataSrc: 'app_lists'
                         },
                         columns: [
@@ -308,7 +308,7 @@
 
                         $.ajax({
                             
-                            url: `https://script.google.com/macros/s/AKfycbxYfyiL-Ns_VK1t0K37dnt5ryTLM9a5fH4FlKdOnBo3rbCNpFu9iIifuRqVWXy_mIAhGQ/exec?authtoken=${sessionemptoken}&subdomains=${Array.from(selectedSubdomains).join(',')}&empid=${empid}`,  // Update this to your API endpoint
+                            url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?authtoken=${sessionemptoken}&subdomains=${Array.from(selectedSubdomains).join(',')}&empid=${empid}`,  // Update this to your API endpoint
                             type: 'GET',
                             success: function (response) {
                                 $('#responseMessage').text(response.build_required);
