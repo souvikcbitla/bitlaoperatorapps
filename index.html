@@ -46,6 +46,9 @@
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script>
         $(document).ready(function() {
+            // const API_URL = "https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec";
+            const API_URL = "https://script.google.com/macros/s/AKfycbxYfyiL-Ns_VK1t0K37dnt5ryTLM9a5fH4FlKdOnBo3rbCNpFu9iIifuRqVWXy_mIAhGQ/exec";
+
             sessionempid = sessionStorage.getItem("empid");
             sessionemptoken = sessionStorage.getItem("emptoken");
             if(sessionempid && sessionemptoken){
@@ -64,7 +67,7 @@
 
                 if (empid && emppass) {
                     $.ajax({
-                        url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?empid=${empid}&emppass=${emppass}&emplogin=true`,
+                        url: `${API_URL}?empid=${empid}&emppass=${emppass}&emplogin=true`,
                         type: "GET",
                         success: function (response) {
                             $("#loader").fadeOut();

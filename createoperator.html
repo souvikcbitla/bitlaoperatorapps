@@ -172,6 +172,8 @@
         
         <script>
             $(document).ready(function() {
+                // const API_URL = "https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec";
+                const API_URL = "https://script.google.com/macros/s/AKfycbxYfyiL-Ns_VK1t0K37dnt5ryTLM9a5fH4FlKdOnBo3rbCNpFu9iIifuRqVWXy_mIAhGQ/exec";
                 storedEmpId = sessionStorage.getItem("empid");
                 sessionemptoken = sessionStorage.getItem("emptoken");
                 var oldSubdomain = "";
@@ -201,7 +203,7 @@
                         developerName: $("#developerName").val(),    // Developer Name
                         keyFile: $("#keyFile").val(),                // Key File Name
                         aliasName: $("#aliasName").val(),            // Alias Name
-                        password: $("#password").val(),              // Key Password
+                        password: $("#password").val(),         // Key Password
                         baseUrl: $("#baseUrl").val(),                // Base URL
                         region: $("#region").val(),                  // Region
                         playStoreLink: $("#playStoreLink").val(),    // Google Play Store Link
@@ -217,7 +219,7 @@
                     // $("#UpdateForm button[type='submit']").prop('disabled', false);
                     // $('#loader').addClass("d-none");
                     $.ajax({
-                        url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?create_entry=true&authtoken=${sessionemptoken}&empid=${storedEmpId}&datahash=${formDataBase64}`,
+                        url: `${API_URL}?create_entry=true&authtoken=${sessionemptoken}&empid=${storedEmpId}&datahash=${formDataBase64}`,
                         type: 'GET',
                         success: function (response) {
                             $("#UpdateForm button[type='submit']").prop('disabled', false);

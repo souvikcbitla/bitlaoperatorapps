@@ -212,6 +212,9 @@
         <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
         <script>
             $(document).ready(function () {
+                // const API_URL = "https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec"; // my email
+                const API_URL = "https://script.google.com/macros/s/AKfycbxYfyiL-Ns_VK1t0K37dnt5ryTLM9a5fH4FlKdOnBo3rbCNpFu9iIifuRqVWXy_mIAhGQ/exec"; // official email
+
                 storedEmpId = sessionStorage.getItem("empid");
                 sessionemptoken = sessionStorage.getItem("emptoken");
 
@@ -235,7 +238,7 @@
 
                     const table = $('#example').DataTable({
                         ajax: {
-                            url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?authtoken=${sessionemptoken}&fetch_entry=true&empid=${empid}`,
+                            url: `${API_URL}?authtoken=${sessionemptoken}&fetch_entry=true&empid=${empid}`,
                             dataSrc: 'app_lists'
                         },
                         columns: [
@@ -308,7 +311,7 @@
 
                         $.ajax({
                             
-                            url: `https://script.google.com/macros/s/AKfycbyN92CNP9xwCIBkFSonIuYQpGQMRATgpWtax3U1Qs2vWUiR7rPAagPNgpvCebsn2_gZ/exec?authtoken=${sessionemptoken}&subdomains=${Array.from(selectedSubdomains).join(',')}&empid=${empid}`,  // Update this to your API endpoint
+                            url: `${API_URL}?authtoken=${sessionemptoken}&subdomains=${Array.from(selectedSubdomains).join(',')}&empid=${empid}`,  // Update this to your API endpoint
                             type: 'GET',
                             success: function (response) {
                                 $('#responseMessage').text(response.build_required);
@@ -346,50 +349,6 @@
                     
                     // Calculate chart data based on table data
                     table.on('xhr', function () {
-                    //     const data = table.ajax.json().app_lists;
-
-                    //     // Initialize counters
-                    //     let buildCounts = {};
-                    //     let countryCounts = {};
-
-                    //     // Loop through the data to aggregate counts
-                    //     data.forEach(item => {
-                    //         // Process the build_required field (Assumes each row has a single value for this field)
-                    //         const buildRequiredValue = item.build_required; // Just one value per row
-                    //         if (buildRequiredValue) {
-                    //             if (buildCounts[buildRequiredValue]) {
-                    //                 buildCounts[buildRequiredValue]++;
-                    //             } else {
-                    //                 buildCounts[buildRequiredValue] = 1;
-                    //             }
-                    //         }
-
-                    //         // Country-wise count
-                    //         const country = item.country_name || "Unknown";
-                    //         if (countryCounts[country]) {
-                    //             countryCounts[country]++;
-                    //         } else {
-                    //             countryCounts[country] = 1;
-                    //         }
-                    //     });
-                        
-                    //     // Display total count
-                    //     $('#totalCount').text(data.length);
-
-                    //     // Display Build Required Counts
-                    //     let buildRequiredHtml = '';
-                    //     for (let build in buildCounts) {
-                    //         buildRequiredHtml += `<tr><td>${build}</td> <td>${buildCounts[build]}</td></tr>`;
-                    //     }
-                    //     $('#buildRequiredCounts').html(buildRequiredHtml);
-
-                    //     // Display Country Wise Counts
-                    //     let countryWiseHtml = '';
-                    //     for (let country in countryCounts) {
-                    //         countryWiseHtml += `<tr><td>${country}</td> <td> ${countryCounts[country]}</td></tr>`;
-                    //     }
-                    //     $('#countryWiseCounts').html(countryWiseHtml);
-
                         $('#loader').addClass("d-none");
                     });
                 }
