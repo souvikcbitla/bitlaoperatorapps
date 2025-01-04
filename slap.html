@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slap/Punch Effect with Boxing Glove Cursor</title>
+    <style>
+        /* Basic styling for the image */
+        #image {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            position: relative;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        /* "Boom" animation */
+        @keyframes boom {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Class to trigger the boom effect */
+        .boom {
+            animation: boom 0.5s ease-out;
+        }
+
+        /* Shake effect */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-out;
+        }
+
+        /* Slap effect */
+        @keyframes slap {
+            0% { transform: rotate(-10deg); }
+            50% { transform: translateX(15px) rotate(10deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        .slap {
+            animation: slap 0.3s ease-out;
+        }
+
+        /* Star explosion effect */
+        @keyframes starExplosion {
+            0% {
+                opacity: 1;
+                transform: scale(0) translateY(0) rotate(0deg);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1) translateY(-30px) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.5) translateY(-60px) rotate(360deg);
+            }
+        }
+
+        /* Styling for stars */
+        .star {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background-color: yellow;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            animation: starExplosion 1s forwards;
+        }
+
+        /* Optional: Slightly larger stars */
+        .star.large {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Additional styles for the explosion area */
+        .explosion-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Click on the image to trigger the slap effect!</h2>
+
+    <div class="explosion-container">
+        <img id="image" src="https://cdn2.psychologytoday.com/assets/styles/manual_crop_1_1_1200x1200/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=1-9sfjwH" alt="Slap or Punch Me">
+    </div>
+
+    <script>
+        const image = document.getElementById('image');
+
+        // Function to create stars
+        function createStars(x, y) {
+            for (let i = 0; i < 10; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+
+                // Randomize the star size and position
+                if (Math.random() > 0.5) {
+                    star.classList.add('large');
+                }
+
+                // Randomize the star's position around the punch point
+                star.style.left = `${x + (Math.random() * 60 - 30)}px`;
+                star.style.top = `${y + (Math.random() * 60 - 30)}px`;
+
+                // Append the star to the explosion container
+                document.querySelector('.explosion-container').appendChild(star);
+
+                // Remove star after animation completes (1 second)
+                setTimeout(() => {
+                    star.remove();
+                }, 1000);
+            }
+        }
+
+        image.addEventListener('click', function(e) {
+            // Get the position of the click (relative to the image)
+            const rect = image.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Trigger the slap, boom, and shake effect
+            image.classList.add('slap');
+            image.classList.add('boom');
+            image.classList.add('shake');
+
+            // Create stars at the click position
+            createStars(x, y);
+
+            // Remove the animation classes after animation ends (except for 'boom')
+            setTimeout(() => {
+                image.classList.remove('slap');
+                // image.classList.remove('boom'); // Keep the boom effect running
+                image.classList.remove('shake');
+            }, 500); // Matches the duration of the animations
+        });
+    </script>
+
+    <style>
+        body {
+            cursor: url("data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAqZJREFUWEetls1rE0EYxp9Ja9s0iZJNKBjrWbFQUGoEbzWof4N61CCKRyniwYOn6NGKVCje7EnwLG1EvBlckLaHoIgF0VLbptt8mDbJZmVSN93MzuzObnZPYfLO+/zmfZ/5IOjzq2bSPwGMs2kIITcjS59euaUnbgGi/6uZtCE5txXNF46IYn0BeBDv6kbzBa6WJ4BK5sI0gfFecuW2MB6ENEB5eupUKBQqslmXf5UxeeKoNBMLIQ3AKzsVp58XABpvhZACYMXXSnWU601f4nSSAZRi+UKC/nYFEBmOrn4iFcMAcU3BbY9ZBcfZ5Uw6EQK2eBm89p6Xg0I4Ajit3k/vWQhHgMql9AtCcEe0+iAAALwWVsDtsAmiBY4mdAP4vllDraE7bsG2Aaz+PtiqoopxK+AmbiZ0Ogd+bP1FZb+FwRDBmeMxmLEsSF8ANJkIQtQiOn4yHkZ89OB+8u0Bqzl5ECKAelPHtz+1TuuEu+Dy9VvG241l6fOdrcRmtYH13T2hPyjc6bHIpPJRXbFVgIqbyn4hnExnhb1YLPYeRFZxGvhQW8P5/UMXy5bEbEkyOoTUsRHbtIbe7owpHz4fArDifqvAekN0U0Y0fYioarPTApF4EBCiqnUvoys3sqphGOesgaPhMEaGh1HStO6wVz84tavnPcBbfVKJY+bebTx5/hLbpZ1AIWwvIlH5x5IJ3L+bDRSC+yZkAZ4+eoDc7BxKOxpEEAMw8GZjRW5TEHyJLhXOioJtJjRFWYjcs7keT9CEs9tfMd7as+Umg3oq8k5dlyHsAFy9lp1oE2PVnMBCJBUFLb0Fbdd+JiwuzPt7k/0X604WQcw8zgkX0q+47TJiIZxKGIQ49zaUgQhKnAvA84S1EkGKCwFMQWaLqosL81MyzvYS8w/wFEPx+hiWkwAAAABJRU5ErkJggg==") 64 64, auto;
+        }
+    </style>
+
+</body>
+</html>
