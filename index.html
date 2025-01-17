@@ -76,6 +76,7 @@
                                 //alert("Success");
                                 sessionStorage.setItem("empid", response.data.empid);
                                 sessionStorage.setItem("emptoken", response.data.empToken);
+                                sessionStorage.setItem("emprole", response.data.empRole);
                                 window.location.href = `home.html`;
                             }else{
                                 $("#errorclass").fadeIn();
