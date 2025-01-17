@@ -218,11 +218,14 @@
                 storedEmpId = sessionStorage.getItem("empid");
                 sessionemptoken = sessionStorage.getItem("emptoken");
 
-                if (!storedEmpId || !sessionemptoken) {
-                    window.location.href = "index.html";
-                }else{
-                    loadDataTable(storedEmpId,sessionemptoken);
-                }
+                alert(storedEmpId);
+                alert(sessionemptoken);
+
+                // if (!storedEmpId || !sessionemptoken) {
+                //     window.location.href = "index.html";
+                // }else{
+                //     loadDataTable(storedEmpId,sessionemptoken);
+                // }
 
                 $("#logout").click(function(){
                     sessionStorage.clear();
