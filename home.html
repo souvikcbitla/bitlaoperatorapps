@@ -239,7 +239,18 @@
                     const table = $('#example').DataTable({
                         ajax: {
                             url: `${API_URL}?authtoken=${sessionemptoken}&fetch_entry=true&empid=${empid}`,
-                            dataSrc: 'app_lists'
+                            //dataSrc: 'app_lists',
+                            dataSrc: function (response) {
+                                // Check the response code
+                                if (response.code === 200) {
+                                    // If the code is 200, return the data to be used by DataTable
+                                    return response.app_lists;
+                                } else {
+                                    // If the code is not 200 (invalid access token), redirect to login page
+                                    window.location.href = "/login";  // Change this URL as per your app's login route
+                                    return []; // Return an empty array to prevent DataTable from rendering
+                                }
+                            }
                         },
                         columns: [
                             {
