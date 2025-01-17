@@ -247,6 +247,7 @@
                                     return response.app_lists;
                                 } else {
                                     // If the code is not 200 (invalid access token), redirect to login page
+                                    sessionStorage.clear();
                                     window.location.href = "index.html";  // Change this URL as per your app's login route
                                     return []; // Return an empty array to prevent DataTable from rendering
                                 }
