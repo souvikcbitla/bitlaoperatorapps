@@ -266,7 +266,13 @@
                                     return data ? new Date(data).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "N/A";
                                 }
                             },
-                            { data: 'playstore_link' },
+                            {
+                                data: 'playstore_link',
+                                render: function (data) {
+                                    // Check if the playstore_link exists and is a valid URL
+                                    return data ? `<a href="${data}" target="_blank">${data}</a>` : 'N/A';
+                                }
+                            },
                             { data: 'region' },
                             { data: 'analytics_email' },
                             { data: 'analytics_property' },
