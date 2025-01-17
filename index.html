@@ -73,7 +73,7 @@
                             $("#loader").fadeOut();
                             $("#loginForm button[type='submit']").prop('disabled', false);
                             if(response.code == 200){
-                                alert(response);
+                                // alert(response);
                                 sessionStorage.setItem("empid", response.data.empid);
                                 sessionStorage.setItem("emptoken", response.data.empToken);
                                 sessionStorage.setItem("emprole", response.data.empRole);
