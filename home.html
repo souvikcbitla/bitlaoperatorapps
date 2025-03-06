@@ -71,19 +71,19 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item active">
+                    <li class="nav-item active" id="menu_home">
                         <a class="nav-link" href="index.html">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="menu_dashboard">
                         <a class="nav-link" href="dashboard.html">Dashboard</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="menu_create_new_operator">
                         <a class="nav-link" href="createoperator.html">Create New Operator</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="menu_download_script">
                         <a class="nav-link" href="downloadScript.html">Download Script File</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="menu_logout">
                         <a class="nav-link" id="logout" href="javascript:void(0);">Logout</a>
                     </li>
                 </ul>
@@ -217,14 +217,25 @@
 
                 storedEmpId = sessionStorage.getItem("empid");
                 sessionemptoken = sessionStorage.getItem("emptoken");
+                sessionemprole = sessionStorage.getItem("emprole");
 
                 // alert(storedEmpId);
                 // alert(sessionemptoken);
 
+                if(sessionemprole=="appdeveloper"){
+                    $("#menu_dashboard").hide();
+                    $("#menu_download_script").hide();
+                } else if(sessionemprole=="support"){
+                    $("#menu_download_script").hide();
+                    $("#menu_create_new_operator").hide();
+                    $('#submitButton').hide();
+                }
+
+                
                 if (!storedEmpId || !sessionemptoken) {
                     window.location.href = "index.html";
                 }else{
-                    loadDataTable(storedEmpId,sessionemptoken);
+                    loadDataTable(storedEmpId,sessionemptoken,sessionemprole);
                 }
 
                 $("#logout").click(function(){
@@ -233,10 +244,16 @@
                 });
                 
 
-                function loadDataTable(empid, sessionemptoken) {
+                function loadDataTable(empid, sessionemptoken,sessionemprole) {
                     $('#loader').removeClass("d-none");
 
-                    $('.table-wrapper, .count-section, #submitButton, .countdata').show();
+                    if(sessionemprole=="support"){
+                        $('#submitButton').hide();
+                    }else{
+                        $('#submitButton').show();
+                    }
+                    
+                    $('.count-section, .countdata').show();
                     let selectedSubdomains = new Set();
 
                     const table = $('#example').DataTable({
@@ -295,9 +312,11 @@
                                 data: 'sub_domain',
                                 render: function (data, type, row) {
                                     // Check if the render type is 'display' for DataTables
-                                    if (type === 'display') {
+                                    if (type === 'display' && sessionemprole!="support") {
                                         const base64Encoded = btoa(storedEmpId+":"+data.trim()+":"+sessionemptoken);
                                         return `<input type="button" class="btn btn-primary editBtn" value="Edit" data-subdomain="${base64Encoded}">`;
+                                    }else{
+                                        return `<input type="button" class="btn btn-secondary" disabled value="Edit">`;
                                     }
                                     return data; // Return raw data for export or other processing
                                 }
@@ -308,7 +327,21 @@
                         scrollX: true,
                         fixedHeader: true,
                         pageLength: 100,
-                        lengthMenu: [5, 10, 25, 50, 100]
+                        lengthMenu: [5, 10, 25, 50, 100],
+                        initComplete: function () {
+                            
+                            if (sessionemprole === 'support') {
+                                table.column(0).visible(false);  // Column index starts at 0
+                                table.column(1).visible(false);  // Column index starts at 0
+                                table.column(5).visible(false);  // Column index starts at 0
+                                table.column(6).visible(false);  // Column index starts at 0
+                                table.column(7).visible(false);  // Column index starts at 0
+                                table.column(8).visible(false);  // Column index starts at 0
+                                table.column(16).visible(false);  // Column index starts at 0
+                                table.column(17).visible(false);  // Column index starts at 0
+                                table.column(18).visible(false);  // Column index starts at 0
+                            }
+                        }
                     });
 
                     // Handle checkbox selection
@@ -362,6 +395,7 @@
 
                     // Maintain checkbox states when changing pages
                     table.on('draw', function () {
+                        $(".table-wrapper").show();
                         $('#example tbody .rowCheckbox').each(function () {
                             const subdomain = $(this).data('subdomain');
                             $(this).prop('checked', selectedSubdomains.has(subdomain));

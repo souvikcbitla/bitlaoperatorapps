@@ -34,19 +34,19 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
+                    <li class="nav-item" id="menu_home">
                         <a class="nav-link" href="index.html">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="menu_dashboard">
                         <a class="nav-link" href="dashboard.html">Dashboard</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="menu_create_new_operator">
                         <a class="nav-link" href="createoperator.html">Create New Operator</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="menu_download_script">
                         <a class="nav-link" href="downloadScript.html">Download Script File</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" id="menu_logout">
                         <a class="nav-link" id="logout" href="javascript:void(0);">Logout</a>
                     </li>
                 </ul>
@@ -178,6 +178,15 @@
                 storedEmpId = sessionStorage.getItem("empid");
                 sessionemptoken = sessionStorage.getItem("emptoken");
                 var oldSubdomain = "";
+                sessionemprole = sessionStorage.getItem("emprole");
+
+                if(sessionemprole=="appdeveloper"){
+                    $("#menu_dashboard").hide();
+                    $("#menu_download_script").hide();
+                } else if(sessionemprole=="support"){
+                    $("#menu_download_script").hide();
+                    $("#menu_create_new_operator").hide();
+                }
 
                 if (!storedEmpId || !sessionemptoken) {
                     window.location.href = "index.html";
